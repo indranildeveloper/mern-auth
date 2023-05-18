@@ -1,7 +1,12 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { Form, Button, Row, Col } from "react-bootstrap";
+import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
+import { useRegisterMutation } from "../slices/usersApiSlice";
+import { setCredentials } from "../slices/authSlice";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -9,9 +14,33 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [register, { isLoading }] = useRegisterMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submit");
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+    } else {
+      try {
+        const response = await register({ name, email, password }).unwrap();
+        dispatch(setCredentials({ ...response }));
+        navigate("/");
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+        console.log(err?.data?.message || err.error);
+      }
+    }
   };
 
   return (
@@ -55,13 +84,15 @@ const Register = () => {
           ></Form.Control>
         </Form.Group>
 
+        {isLoading && <Loader />}
+
         <Button type="submit" variant="primary" className="mt-3">
           Sign Up
         </Button>
 
         <Row className="py-3">
           <Col>
-            Already have an account? <Link to="/register">Log In</Link>
+            Already have an account? <Link to="/login">Log In</Link>
           </Col>
         </Row>
       </Form>
