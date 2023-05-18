@@ -1,0 +1,27 @@
+{
+  "name": "mern-auth",
+  "version": "1.0.0",
+  "description": "MERN Stack Authentication Template",
+  "main": "server/server.js",
+  "author": "Indranil Halder",
+  "license": "MIT",
+  "scripts": {
+    "start": "node -r esm server/server",
+    "server": "nodemon -r esm server/server",
+    "client": "yarn --cwd client dev",
+    "client:install": "yarn --cwd client install"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "6.11.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
